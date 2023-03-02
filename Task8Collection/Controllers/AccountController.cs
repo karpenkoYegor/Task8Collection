@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -110,20 +111,15 @@ namespace Task8Collection.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-        public async Task<IActionResult> ChangeTheme(string theme)
+        [HttpPost]
+        public async Task<IActionResult> ChangeTheme(string theme, string returnUrl)
         {
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            if (theme == "dark")
-            {
-                user.ThemeUi = ThemeUi.Dark;
-            }
-            else
-            {
-                user.ThemeUi = ThemeUi.Light;
-            }
-
-            await _userManager.UpdateAsync(user);
-            return Ok();
+            Response.Cookies.Append(
+                "theme",
+                theme,
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+            return RedirectToAction("UserProfile", new { userName = User.Identity.Name });
         }
         [HttpPost]
         public IActionResult SetLanguage(string culture, string returnUrl, string userName)
@@ -134,7 +130,7 @@ namespace Task8Collection.Controllers
                 new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
             );
 
-            return RedirectToAction("UserProfile", new {userName = userName});
+            return RedirectToAction("UserProfile", new { userName = User.Identity.Name });
         }
     }
 }

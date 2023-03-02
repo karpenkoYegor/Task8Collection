@@ -16,7 +16,7 @@
 }
 
 <h3>@Model.User.UserName Page</h3>
-@if (Model.User.UserName == User.Identity.Name || User.HasClaim(ClaimTypes.Role, "Admin"))
+@if (Model.User.UserName == User.Identity.Name)
 {
     <ul class="navbar-nav flex-grow-1">
         <form asp-controller="Account" asp-action="SetLanguage"
@@ -29,20 +29,26 @@
             </li>
         </form>
         <li class="nav-item mt-3">
-            <select id="toggleTheme" class="form-select">
-                @if (theme == "dark")
-                {
-                    <option value="light">@Localizer["Light"]</option>
-                    <option value="dark" selected="selected">@Localizer["Dark"]</option>
-                }
-                else
-                {
-                    <option value="light" selected="selected">@Localizer["Light"]</option>
-                    <option value="dark">@Localizer["Dark"]</option>
-                }
-            </select>
+            <form asp-controller="Account" asp-action="ChangeTheme"
+                  method="post" class="form-horizontal">
+                <select id="toggleTheme" class="form-select" name="theme" onchange="this.form.submit();">
+                    @if (theme == "dark")
+                    {
+                        <option value="light">@Localizer["Light"]</option>
+                        <option value="dark" selected="selected">@Localizer["Dark"]</option>
+                    }
+                    else
+                    {
+                        <option value="light" selected="selected">@Localizer["Light"]</option>
+                        <option value="dark">@Localizer["Dark"]</option>
+                    }
+                </select>
+            </form>
         </li>
     </ul>
+}
+@if (Model.User.UserName == User.Identity.Name || User.HasClaim(ClaimTypes.Role, "Admin"))
+{
     <form method="post" asp-action="AddCollection" asp-controller="Collection" asp-route-userId="@Model.User.Id" asp-route-userName="@Model.User.UserName">
         <div class="text-danger" asp-validation-summary="All"></div>
         <div class="mb-3">

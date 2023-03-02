@@ -26,7 +26,7 @@ namespace Task8Collection.Controllers
             var lastAddedItems = _repository.ItemRepository
                 .GetAll()
                 .Include(i => i.Tags)
-                .ToList().TakeLast(3);
+                .ToList().TakeLast(3).Reverse();
             var collectionWithMostAddedItems = _repository.CollectionRepository
                 .GetAll()
                 .Include(c => c.Items)

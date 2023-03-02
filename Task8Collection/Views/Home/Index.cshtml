@@ -17,7 +17,7 @@
     </div>
 </div>
 <div class="container">
-    <div class="row">Последние добавленные вещи</div>
+    <div class="row"><h5 class ="text-start">Последние добавленные вещи</h5></div>
     @foreach (var item in @Model.LastAddedItems)
     {
         <div class="card mt-3">
@@ -36,9 +36,9 @@
         </div>
     }
 </div>
-<div class="container">
-    <div class="row">Коллекции с наибольшим количеством вещей</div>
-    <table class="table">
+<div class="container mt-3">
+    <div class="row"><h5 class="text-start">Коллекции с наибольшим количеством вещей</h5></div>
+    <table class="table ">
         <tr>
             <th>@Localizer["Name"]</th>
             <th>@Localizer["Discription"]</th>
