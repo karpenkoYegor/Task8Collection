@@ -1,0 +1,63 @@
+﻿@using Markdig
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Task8Collection.Models.Item.ItemPageViewModel
+<input type="hidden" id="idItem" value="@Model.Item.Id.ToString()"/>
+<div class="card mb-3">
+    <div class="card-header bg-transparent">
+        <div>
+            <a class="nav-link" asp-action="CollectionPage" asp-controller="Collection" asp-route-collectionId="@Model.Item.CollectionId">@Model.Item.Collection.Name</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">@Model.Item.Name</h5>
+        <div class="card-text">
+
+        </div>
+    </div>
+    <ul class="list-group border-0">
+        @foreach (var field in Model.Item.Fields)
+        {
+            <li class="list-group-item">
+                @field.Name @(new HtmlString(Markdown.ToHtml(field.ToString() ?? "")))
+            </li>
+        }
+    </ul>
+</div>
+@if (User.Identity.IsAuthenticated)
+{
+    <form method="post">
+        <input type="hidden" value="@Model.Item.Id" name="itemId">
+        @if (!Model.IsLiked)
+        {
+            <button class="btn btn-primary m-3" asp-action="Like"><i class="fa-regular fa-thumbs-up"></i> @Localizer["Like"] @Model.Item.Likes</button>
+        }
+        else
+        {
+            <button class="btn btn-danger m-3" asp-action="Unlike"><i class="fa-solid fa-thumbs-down"></i> @Localizer["Unlike"] @Model.Item.Likes</button>
+        }
+    </form>
+    <div class="card">
+        <div class="card-header">
+            Комментарии
+        </div>
+        <div class="card-body" id="commentsBody">
+            @foreach (var comment in Model.Item.Comments)
+            {
+                <h6 class="card-title">@comment.UserName</h6>
+                <p class="card-text">@comment.CommentBody</p>
+            }
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="AddComment">
+                <input type="hidden" value="@User.Identity.Name" name="userName">
+                <input type="hidden" value="@Model.Item.Id" name="itemId">
+                <textarea class="form-control mb-3" name="commentBody"></textarea>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-chat-left-dots-fill"></i> @Localizer["Send"]</button>
+            </form>
+        </div>
+    </div>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/itemsPage.js"></script>
+}
+

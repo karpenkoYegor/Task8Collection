@@ -1,0 +1,35 @@
+﻿@model LoginViewModel
+<p>
+    <h3>User Login</h3>
+</p>
+<div class="container border" style="padding:20px">
+    <form method="post">
+        <div class="text-danger" asp-validation-summary="All"></div>
+        <div class="form-group row mb-3">
+            <div class="col-2">
+                <label asp-for="Email">Email</label>
+            </div>
+            <div class="col">
+                <input type="text" asp-for="Email" class="form-control" />
+            </div>
+            <span class="text-danger" asp-validation-for="Email"></span>
+        </div>
+        <div class="form-group row mb-3">
+            <div class="col-2">
+                <label asp-for="Password">@Localizer["Password"]</label>
+            </div>
+            <div class="col">
+                <input type="password" asp-for="Password" class="form-control" />
+            </div>
+            <span class="text-danger" asp-validation-for="Password"></span>
+        </div>
+        <div class="form-group row mb-3">
+            <div class="col-1">
+                <input type="submit" class="btn btn-primary" value="@Localizer["SignUp"]" />
+            </div>
+            <div class="col">
+                <a class="btn btn-primary" asp-action="Register" asp-controller="Account">@Localizer["Register"]</a>
+            </div>
+        </div>
+    </form>
+</div>

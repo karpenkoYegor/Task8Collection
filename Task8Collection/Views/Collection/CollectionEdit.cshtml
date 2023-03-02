@@ -1,0 +1,377 @@
+﻿@using System.Security.Claims
+@using Markdig
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Task8Collection.Data.Entities
+@model Task8Collection.Models.Collection.CollectionEditViewModel
+@{
+    int intNumber = 0;
+    int stringNumber = 0;
+    int boolNumber = 0;
+    int dateNumber = 0;
+    string fieldType = "";
+}
+@if (@Model.UserName == User.Identity.Name || User.HasClaim(ClaimTypes.Role, "Admin"))
+{
+    <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                @Localizer["CollectionSettings"]
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div>
+                    <div class="m-3">
+                        <form method="post" asp-action="CollectionEdit" asp-controller="Collection">
+                            <div class="text-danger" asp-validation-summary="All"></div>
+                            <input value="@Model.CollectionModel.CollectionId" asp-for="CollectionModel.CollectionId" hidden="hidden" />
+                            <input value="@Model.UserName" asp-for="UserName" hidden="hidden"/>
+                            <div class="mb-3">
+                                    <label for="nameCollection" class="form-label">@Localizer["NameCollection"]</label>
+                                <input type="text" class="form-control" id="nameCollection" asp-for="CollectionModel.Name" value="@Model.CollectionModel.Name">
+                            </div>
+                            <div class="mb-3">
+                                    <label for="collectionTheme" class="form-label">@Localizer["Theme"]</label>
+                                <select id="collectionTheme" class="form-select" asp-for="CollectionModel.ThemeId">
+                                    @foreach (var item in Model.Themes)
+                                    {
+                                        @if (item.Id == Model.CollectionModel.ThemeId)
+                                        {
+                                            <option value="@item.Id" selected>@item.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                    <label for="descriptionCollection" class="form-label">@Localizer["Discription"]</label>
+                                <textarea class="form-control" id="descriptionCollection" asp-for="CollectionModel.Description">@Model.Collection.Description</textarea>
+                            </div>
+                            <button class="btn btn-primary" data-title="Update collection" type="submit">
+                                    @Localizer["Update"]
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    @Localizer["CollectionFields"]
+            </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div>
+                    <div class="m-3">
+                        <form method="post" asp-action="AddCollectionField" asp-controller="Collection">
+                            <input value="@Model.CollectionModel.CollectionId" asp-for="CollectionModel.CollectionId" hidden="hidden" />
+                            <input value="@Model.UserName" asp-for="UserName" hidden="hidden" />
+                            <div class="mb-3">
+                                    <label for="nameCollection" class="form-label">@Localizer["NameCollection"]</label>
+                                <input type="text" class="form-control" id="nameCollection" asp-for="CollectionField.CollectionFieldName">
+                            </div>
+                            <div class="mb-3">
+                                <select id="collectionTheme" class="form-select" asp-for="CollectionField.DataTypeField">
+                                    @foreach (var item in Enum.GetValues(typeof(DataTypeFields)).Cast<DataTypeFields>().ToList())
+                                    {
+                                        <option value="@((int)item)">@item</option>
+                                    }
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" data-title="Add collection" type="submit">
+                                    @Localizer["AddField"]
+                            </button>
+                        </form>
+                        <div class="border border-1 mt-3">
+                            @foreach (var field in @Model.Collection.Fields)
+                            {
+                                <div class="m-3">
+                                    <form method="post">
+                                        <input value="@Model.CollectionModel.CollectionId" asp-for="CollectionModel.CollectionId" hidden="hidden" />
+                                        <input value="@Model.UserName" asp-for="UserName" hidden="hidden" />
+                                        <input value="@field.Id" asp-for="CollectionField.CollectionFieldId" hidden="hidden" />
+                                        <div class="row">
+                                            @switch (field.DataTypeField)
+                                            {
+                                                case 0:
+                                                    <label for="fieldCollectionName" class="form-label">Number field</label>
+                                                    break;
+                                                case 1:
+                                                    <label for="fieldCollectionName" class="form-label">String field</label>
+                                                    break;
+                                                case 2:
+                                                    <label for="fieldCollectionName" class="form-label">Date field</label>
+                                                    break;
+                                                case 3:
+                                                    <label for="fieldCollectionName" class="form-label">Bool field</label>
+                                                    break;
+                                                case 4:
+                                                    <label for="fieldCollectionName" class="form-label">Text field</label>
+                                                    break;
+                                            }
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-10">
+                                                <input type="text" class="form-control" id="fieldCollectionName" value="@field.Name" asp-for="CollectionField.CollectionFieldName">
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="row">
+                                                </div>
+                                                <button class="btn btn-warning" type="submit" asp-action="UpdateCollectionField" asp-controller="Collection">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </button>
+                                                <button class="btn btn-danger" type="submit" asp-action="DeleteCollectionField" asp-controller="Collection">
+                                                    <i class="fa-solid fa-x text-black"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                @Localizer["CollectionItems"]
+            </button>
+        </h2>
+        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="m-3">
+                    <form method="post" asp-action="AddItem" asp-controller="Item">
+                        <input value="@Model.CollectionModel.CollectionId" asp-for="CollectionModel.CollectionId" hidden="hidden" />
+                        <input value="@Model.UserName" asp-for="UserName" hidden="hidden" />
+                        <div class="mb-3">
+                            <label for="nameItemCollection" class="form-label">Item name</label>
+                            <input type="text" class="form-control" id="nameItemCollection" asp-for="CollectionItem.Name">
+                        </div>
+                        <button class="btn btn-primary" data-title="Add item" type="submit">
+                            Add item
+                        </button>
+                    </form>
+                    <form method="get" asp-action="CollectionEdit" class="mt-3">
+                        <input value="@Model.CollectionModel.CollectionId" name="collectionId" hidden="hidden" />
+                        <input value="@Model.UserName" name="userName" hidden="hidden" />
+                        <div class="mb-3">
+                            <label for="searchNameItemCollection" class="form-label">Item name</label>
+                            <input type="text" class="form-control" id="searchNameItemCollection" name="searchItem">
+                        </div>
+                        <button class="btn btn-primary" data-title="Search item" type="submit">
+                            Search item
+                        </button>
+                    </form>
+                    @if (Model.CollectionModel.Items.Count > 0)
+                    {
+                        <table class="table border border-1 mt-3">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <a class="card-link" asp-action="CollectionEdit"
+                                       asp-route-userName="@Model.UserName"
+                                       asp-route-collectionId="@Model.CollectionModel.CollectionId"
+                                       asp-route-sortedBy="Name"
+                                       asp-route-sortOrder="@ViewData["Name"]"
+                                       asp-route-fieldType="Name">
+                                        Имя
+                                    </a>
+                                </th>
+                                @foreach (var field in Model.Collection.Fields)
+                                {
+                                    switch (field.DataTypeField)
+                                    {
+                                        case 0:
+                                            fieldType = "IntField";
+                                            intNumber++;
+                                            break;
+                                        case 1:
+                                            fieldType = "StringField";
+                                            stringNumber++;
+                                            break;
+                                        case 2:
+                                            fieldType = "DateField";
+                                            dateNumber++;
+                                            break;
+                                        case 3:
+                                            fieldType = "BoolField";
+                                            boolNumber++;
+                                            break;
+                                        case 4:
+                                            fieldType = "StringField";
+                                            stringNumber++;
+                                            break;
+                                    }
+                                    <th>
+                                        <a class="card-link"
+                                           asp-action="CollectionEdit"
+                                           asp-route-userName="@Model.UserName"
+                                           asp-route-collectionId="@Model.CollectionModel.CollectionId"
+                                           asp-route-sortedBy="@field.Name"
+                                           asp-route-sortedById="@field.Id"
+                                           asp-route-sortOrder="@ViewData[@field.Name]"
+                                           asp-route-fieldType="@fieldType">
+                                            @field.Name
+                                        </a>
+                                    </th>
+                                }
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @for (int i = 0; i < Model.CollectionModel.Items.Count; i++)
+                            {
+                                var item = Model.CollectionModel.Items[i];
+                                <tr data-bs-toggle="collapse" href="#a@(item.Id)" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    <td>@item.Name</td>
+                                    @foreach (var field in item.Fields)
+                                    {
+                                        if (field is StringField && field.ToString() != null)
+                                        {
+                                            <td>@(new HtmlString(Markdown.ToHtml(@field.ToString())))</td>
+                                            
+                                        }
+                                        else
+                                        {
+                                            <td>@field.ToString()</td>
+                                        }
+                                    }
+                                </tr>
+                                <tr class="collapse" id="a@(item.Id)">
+                                    <td colspan="@(item.Fields.Count+1)">
+                                        <div class="m-3">
+                                            <form method="post">
+                                                <input value="@Model.CollectionModel.CollectionId" name="model.Item.CollectionId" hidden="hidden" />
+                                                <input value="@Model.CollectionModel.CollectionId" name="model.CollectionModel.CollectionId" hidden="hidden" />
+                                                <input value="@Model.UserName" name="model.UserName" hidden="hidden" />
+                                                <input value="@item.Id" name="model.Item.Id" hidden="hidden" />
+                                                <div class="mb-3">
+                                                    <label for="nameItemCollection" class="form-label">Item name</label>
+                                                    <input type="text" class="form-control" id="nameItemCollection" name="model.Item.Name" value="@item.Name">
+                                                </div>
+                                                <div class="mb-3">
+                                                    @for (int j = 0; j < item.BoolFields.Count; j++)
+                                                    {
+                                                        var field = item.BoolFields[j];
+                                                        <div class="mb-3">
+                                                            <label for="nameBoolItemCollection_@(field.ItemId)_@field.Id" class="form-label">@field.Name</label>
+                                                            <input id="nameDateItemCollection_@(field.ItemId)_@field.Id"
+                                                                   type="checkbox"
+                                                                   name="model.Item.BoolFields[@j].Value"
+                                                                   value="true"
+                                                                   checked="@field.Value"/>
+                                                            <input value="@field.Id" name="model.Item.BoolFields[@j].Id" hidden="hidden"/>
+                                                        </div>
+                                                    }
+
+                                                    @for (int j = 0; j < item.IntFields.Count; j++)
+                                                    {
+                                                        var field = item.IntFields[j];
+                                                        <div class="mb-3">
+                                                            <label for="nameIntItemCollection_@(field.ItemId)_@field.Id" class="form-label">@field.Name</label>
+                                                            <input class="form-control"
+                                                                   type="number"
+                                                                   value="@field.Value"
+                                                                   name="model.Item.IntFields[@j].Value"
+                                                                   id="nameIntItemCollection_@(field.ItemId)_@field.Id"/>
+                                                            <input value="@field.Id" name="model.Item.IntFields[@j].Id" hidden="hidden"/>
+                                                        </div>
+                                                    }
+
+                                                    @for (int j = 0; j < item.StringFields.Count; j++)
+                                                    {
+                                                        var field = item.StringFields[j];
+                                                        <div class="mb-3">
+                                                            <label for="nameStringItemCollection_@(field.ItemId)_@field.Id" class="form-label">@field.Name</label>
+                                                            @if (!field.IsLong)
+                                                            {
+                                                                <input class="form-control"
+                                                                       type="text" value="@field.Value"
+                                                                       name="model.Item.StringFields[@j].Value"
+                                                                       id="nameStringItemCollection_@(field.ItemId)_@field.Id"/>
+                                                            }
+                                                            else
+                                                            {
+                                                                <textarea class="form-control"
+                                                              name="model.Item.StringFields[@j].Value"
+                                                              id="nameStringItemCollection_@(field.ItemId)_@field.Id">@field.Value</textarea>
+                                                            }
+                                                            <input value="@field.Id" name="model.Item.StringFields[@j].Id" hidden="hidden"/>
+                                                        </div>
+                                                    }
+
+                                                    @for (int j = 0; j < item.DateFields.Count; j++)
+                                                    {
+                                                        var field = item.DateFields[j];
+                                                        <div class="mb-3">
+                                                            <label for="nameDateItemCollection_@(field.ItemId)_@field.Id" class="form-label">@field.Name</label>
+                                                            <input id="nameDateItemCollection_@(field.ItemId)_@field.Id"
+                                                                   class="form-control"
+                                                                   type="date" asp-for="@field.Value"
+                                                                   name="model.Item.DateFields[@j].Value"/>
+                                                            <input value="@field.Id" name="model.Item.DateFields[@j].Id" hidden="hidden"/>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <button class="btn btn-primary" data-title="Add collection" type="submit" asp-action="EditItem" asp-controller="Item">
+                                                    Save item
+                                                </button>
+                                                <button class="btn btn-danger" data-title="Add collection" type="submit" asp-action="DeleteItem" asp-controller="Item">
+                                                    Delete item
+                                                </button>
+                                            </form>
+                                            <div class="mt-3">
+                                                @foreach (var tag in item.Tags)
+                                                {
+                                                    <div class="d-inline-block">
+                                                        <form method="post">
+                                                            <input type="hidden" value="@tag.Id" name="tagId"/>
+                                                            <input type="hidden" value="@item.Id" name="itemId"/>
+                                                            <input value="@Model.CollectionModel.CollectionId" name="collectionId" hidden="hidden" />
+                                                                    <input value="@Model.UserName" name="userName" hidden="hidden" />
+                                                            <div class="input-group col-3">
+                                                                <button class="btn btn-danger" type="submit" asp-action="DeleteTag" asp-controller="Tag">
+                                                                    <i class="fa-solid fa-x"></i>
+                                                                </button>
+                                                                <input class="form-control" value="@tag.Name" readonly/>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <form method="post" asp-action="AddTag" asp-controller="Tag" class="mt-3">
+                                                <input value="@Model.CollectionModel.CollectionId" name="collectionId" hidden="hidden" />
+                                                <input value="@Model.UserName" name="userName" hidden="hidden" />
+                                                <input value="@item.Id" name="itemId" hidden="hidden" />
+                                                <div class="mb-3">
+                                                    <label for="tagName" class="form-label">Item tag</label>
+                                                    <input type="text" class="form-control" id="tagName" name="tagName">
+                                                </div>
+                                                <button class="btn btn-primary" data-title="Search item" type="submit">
+                                                    Add tag
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+}

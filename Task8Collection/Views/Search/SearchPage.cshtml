@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Task8Collection.Data.Entities.Item>
+@{
+}
+<ul class="list-group">
+    @foreach (var item in Model)
+    {
+        <li class="list-group-item"><a asp-action="ItemPage" asp-controller="Item" asp-route-id="@item.Id">@item.Name</a> @item.Collection.Name</li>
+    }
+</ul>

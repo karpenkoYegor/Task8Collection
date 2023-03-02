@@ -1,0 +1,67 @@
+﻿@using Markdig
+@using Microsoft.AspNetCore.Html
+@model Task8Collection.Models.Home.HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div id="myCanvasContainer" class="row">
+    <div class="col center">
+        <canvas width="300" height="300" id="myCanvas">
+            <ul>
+                @foreach (var tag in Model.Tags)
+                {
+                    <li><a asp-action="SearchPage" asp-controller="Search" asp-route-tagId="@tag.Id">@tag.Name</a></li>
+                }
+            </ul>
+        </canvas>
+    </div>
+</div>
+<div class="container">
+    <div class="row">Последние добавленные вещи</div>
+    @foreach (var item in @Model.LastAddedItems)
+    {
+        <div class="card mt-3">
+            <div class="card-header">
+                @item.Name
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@item.Name</h5>
+                @foreach (var tag in item.Tags)
+                {
+                    <a asp-action="SearchPage" asp-controller="Search" asp-route-tagId="@tag.Id">#@(tag.Name + " ")</a>
+                }
+                <br/>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    }
+</div>
+<div class="container">
+    <div class="row">Коллекции с наибольшим количеством вещей</div>
+    <table class="table">
+        <tr>
+            <th>@Localizer["Name"]</th>
+            <th>@Localizer["Discription"]</th>
+        </tr>
+        @foreach (var collection in @Model.CollectionsWithMostAddedItems)
+        {
+            <tr>
+                <td>@collection.Name</td>
+                <td>@(new HtmlString(Markdown.ToHtml(@collection.Description)))</td>
+            </tr>
+        }
+    </table>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/tagcanvas.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    window.onload = function() {
+        try {
+            TagCanvas.Start('myCanvas');
+        } catch(e) {
+            // something went wrong, hide the canvas container
+            document.getElementById('myCanvasContainer').style.display = 'none';
+        }
+    };
+</script>

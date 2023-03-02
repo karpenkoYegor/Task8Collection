@@ -1,0 +1,39 @@
+﻿@model List<Task8Collection.Models.Admin.AdminPanelViewModel>
+
+<form method="post">
+    <div class="row mb-3">
+        <div class="col">
+            <input class="form-control" />
+        </div>
+        <div class="col">
+            <button class="btn btn-primary" type="submit">Найти</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped table-hover">
+    <tr>
+        <td>№</td>
+        <td>@Localizer["Name"]</td>
+        <td>@Localizer["Role"]</td>
+        <td>@Localizer["IsBlocked"]</td>
+        <td></td>
+        <td></td>
+    </tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.User.Id</td>
+            <td>@user.User.UserName</td>
+            <td>@user.Role</td>
+            <td></td>
+            <td><a class="btn btn-primary" href="@Url.ActionLink("EditPage", "Admin", new { id = user.User.Id })"><i class="fa-solid fa-pen-to-square"></i></a></td>
+            <td>
+
+                <form method="post" asp-action="DeleteConfirmed" asp-route-userName="@user.User.UserName">
+                    <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>

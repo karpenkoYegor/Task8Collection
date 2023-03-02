@@ -1,0 +1,23 @@
+﻿@using Markdig
+@using Microsoft.AspNetCore.Html
+@model Task8Collection.Data.Entities.Collection
+
+<div class="card mb-3">
+    <div class="card-header bg-transparent">@Model.Theme.Name</div>
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <div class="card-text">
+            @(new HtmlString(Markdown.ToHtml(@Model.Description)))
+        </div>
+    </div>
+    <ol class="list-group list-group-numbered border-0">
+        @foreach (var item in Model.Items)
+        {
+            <li class="list-group-item">
+                <a class="stretched-link" asp-action="ItemPage" asp-controller="Item" asp-route-id="@item.Id">
+                    @item.Name
+                </a>
+            </li>
+        }
+    </ol>
+</div>

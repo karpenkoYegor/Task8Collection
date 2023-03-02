@@ -1,0 +1,20 @@
+﻿@using Task8Collection.Data.Entities
+@model Task8Collection.Models.Admin.EditPageViewModel
+<form method="post" asp-action="EditPage" asp-controller="Admin">
+    <input type="hidden"
+           asp-for="UserName" value="@Model.UserName"/>
+    <input type="hidden"
+           asp-for="UserId" value="@Model.UserId"/>
+    <div class="mb-3">
+        <label for="userRole" class="form-label">@Localizer["Role"]</label>
+        <select id="userRole" class="form-select" name="RoleAccount">
+            <option value="0">Admin</option>
+            <option value="1">User</option>
+        </select>
+    </div>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input">
+        <label class="form-check-label">@Localizer["Block"]</label>
+    </div>
+    <button type="submit" class="btn btn-primary">@Localizer["Update"]</button>
+</form>
