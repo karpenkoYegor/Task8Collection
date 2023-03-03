@@ -192,4 +192,10 @@
   <data name="CollectionItems" xml:space="preserve">
     <value>Collection Items</value>
   </data>
+  <data name="ItemsCount" xml:space="preserve">
+    <value>Items count</value>
+  </data>
+  <data name="Go" xml:space="preserve">
+    <value>Go</value>
+  </data>
 </root>

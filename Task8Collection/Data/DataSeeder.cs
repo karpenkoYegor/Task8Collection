@@ -38,7 +38,7 @@ public class DataSeeder
                 AccessFailedCount = 0,
                 RoleAccount = RoleAccount.Admin
             };
-            _userManager.CreateAsync(user, "PasswordAdmin123").GetAwaiter().GetResult();
+            _userManager.CreateAsync(user, "").GetAwaiter().GetResult();
             var adminGuid = Guid.NewGuid().ToString();
             var userGuid = Guid.NewGuid().ToString();
             _dbContext.Roles.AddRange(new List<IdentityRole>()

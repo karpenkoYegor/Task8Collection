@@ -1,4 +1,6 @@
 ﻿@using System.Security.Claims
+@using Markdig
+@using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Localization
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -78,10 +80,12 @@
         <tr>
             <td><a class="link-primary" asp-action="CollectionPage" asp-controller="Collection" asp-route-collectionId="@collection.Id">@collection.Name</a></td>
             <td>@collection.Theme.Name</td>
+            <td>
+                @(new HtmlString(Markdown.ToHtml(@collection.Description)))
+            </td>
             @if (Model.User.UserName == User.Identity.Name || User.HasClaim(ClaimTypes.Role, "Admin"))
             {
                 <td>
-
                     <a class="btn btn-primary" asp-action="CollectionEdit" asp-controller="Collection" asp-route-collectionId="@collection.Id" asp-route-userName="@Model.User.UserName">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </a>

@@ -112,6 +112,7 @@ namespace Task8Collection.Controllers
                 },
                 Themes = _repository.ThemeRepository.GetAll().ToList(),
                 UserName = userName,
+                Tags = _repository.TagRepository.GetAll().ToList()
             };
 
             return View(model);

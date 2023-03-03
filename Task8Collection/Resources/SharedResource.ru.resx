@@ -192,4 +192,10 @@
   <data name="CollectionItems" xml:space="preserve">
     <value>Вещи коллекции</value>
   </data>
+  <data name="ItemsCount" xml:space="preserve">
+    <value>Количество вещей</value>
+  </data>
+  <data name="Go" xml:space="preserve">
+    <value>Перейти</value>
+  </data>
 </root>

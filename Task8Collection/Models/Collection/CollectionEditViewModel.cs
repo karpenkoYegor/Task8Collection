@@ -12,6 +12,7 @@ public class CollectionEditViewModel
     public CollectionItem CollectionItem { get; set; }
     public string UserName { get; set; }
     public ItemModel Item { get; set; }
+    public List<Tag> Tags { get; set; }
 }
 
 public enum SortState

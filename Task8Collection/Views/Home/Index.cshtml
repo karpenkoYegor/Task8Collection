@@ -31,7 +31,7 @@
                     <a asp-action="SearchPage" asp-controller="Search" asp-route-tagId="@tag.Id">#@(tag.Name + " ")</a>
                 }
                 <br/>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <a class="btn btn-primary" asp-action="ItemPage" asp-controller="Item" asp-route-id="@item.Id">@Localizer["Go"]</a>
             </div>
         </div>
     }
@@ -42,12 +42,14 @@
         <tr>
             <th>@Localizer["Name"]</th>
             <th>@Localizer["Discription"]</th>
+            <th>@Localizer["ItemsCount"]</th>
         </tr>
         @foreach (var collection in @Model.CollectionsWithMostAddedItems)
         {
             <tr>
-                <td>@collection.Name</td>
+                <td><a asp-action="CollectionPage" asp-controller="Collection" asp-route-collectionId="@collection.Id">@collection.Name</a></td>
                 <td>@(new HtmlString(Markdown.ToHtml(@collection.Description)))</td>
+                <td>@collection.Items.Count</td>
             </tr>
         }
     </table>

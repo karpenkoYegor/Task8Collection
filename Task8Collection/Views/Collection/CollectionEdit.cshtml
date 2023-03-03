@@ -355,7 +355,13 @@
                                                 <input value="@item.Id" name="itemId" hidden="hidden" />
                                                 <div class="mb-3">
                                                     <label for="tagName" class="form-label">Item tag</label>
-                                                    <input type="text" class="form-control" id="tagName" name="tagName">
+                                                    <input list="tags" type="text" class="form-control" id="tagName" name="tagName">
+                                                    <datalist id="tags">
+                                                        @foreach (var tag in Model.Tags)
+                                                        {
+                                                            <option value="@tag.Name"/>
+                                                        }
+                                                    </datalist>
                                                 </div>
                                                 <button class="btn btn-primary" data-title="Search item" type="submit">
                                                     Add tag
